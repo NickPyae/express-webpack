@@ -1,0 +1,12 @@
+npm-debug.*
+dist
+node_modules
+.DS_Store
+.tmp
+npm-debug.log
+coverage/
+.idea/
+yarn.lock
+.vscode/*
+.webpack/*
+
