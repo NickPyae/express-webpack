@@ -1,0 +1,25 @@
+swagger: "2.0"
+info:
+  description: "Sample API"
+  version: "1.0.0"
+  title: "Sample API"
+host: "localhost:8080"
+basePath: "/api"
+tags:
+- name: "sample"
+  description: "Sample api"
+schemes:
+- "https"
+- "http"
+paths:
+  /sample:
+    get:
+      tags:
+      - "sample"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+        404:
+          description: "Not Found"

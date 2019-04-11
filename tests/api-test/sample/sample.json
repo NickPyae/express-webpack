@@ -1,0 +1,37 @@
+{
+    "variables": [],
+    "info": {
+      "name": "Sample API",
+      "_postman_id": "6f613395-2ffa-3244-313f-49c494d58008",
+      "description": "",
+      "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Sample",
+        "request": {
+          "url": {
+            "raw": "http://localhost:8080/api/sample",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "8080",
+            "path": ["api", "sample"],
+            "query": [{}],
+            "variable": []
+          },
+          "method": "GET",
+          "header": [
+            {
+              "key": "X-Correlation-Id",
+              "value": "12345-12345-12345",
+              "description": ""
+            }
+          ],
+          "body": {},
+          "description": ""
+        },
+        "response": []
+      }
+    ]
+  }
+  

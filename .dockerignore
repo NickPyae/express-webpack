@@ -1,0 +1,32 @@
+# node_modules
+node_modules
+
+# npm-debug log
+npm-debug.log
+
+# Azure devops PR template
+.azuredevops
+
+# hidden .git folder
+.git
+
+# VScode settings
+.vscode
+
+# test coverage folder
+coverage
+
+# dist folder
+dist
+
+# PR template
+.azuredevops
+
+# Dockerfile
+Dockerfile
+
+# Docker ignore
+.dockerignore
+
+# all yml files
+*.yml

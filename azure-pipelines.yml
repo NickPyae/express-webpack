@@ -1,0 +1,116 @@
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+      - develop
+
+pr:
+  branches:
+    include:
+      - master
+      - develop
+
+variables:
+  projectName: irecruit-skeleton-service
+  acr: irecruit
+  acrConnector: iRecruit
+  resourceGroup: AIASG_AIAiRecruit_Dev
+  clusterName: AIAiRecruit-Dev-Cluster
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
+
+
+  - task: Npm@1
+    displayName: 'Authenticate to Azure Artifacts'
+    inputs:
+      customRegistry: 'useNpmrc'
+
+  - script: npm install
+    displayName: 'Install depedencies'
+
+  - task: Npm@1
+    displayName: 'Install pipeline util'
+    inputs:
+      command: custom
+      customCommand: install @aia-digital/pipeline-utils-module
+      customRegistry: 'useNpmrc'
+
+  - task: Npm@1
+    displayName: 'Install swagger converter'
+    inputs:
+      command: custom
+      customCommand: install -g api-spec-converter
+      customRegistry: 'useNpmrc'
+
+  - script: |
+      export API_DOC_OUTPUT=$(build.artifactStagingDirectory)/api-doc_open_api.json
+      npm run build
+      npm run gen-api-doc
+    displayName: 'Generate API Doc'
+
+  - script: |
+      export API_DOC_OUTPUT=$(build.artifactStagingDirectory)/api-doc_open_api.json
+      export API_DOC_OUTPUT_SWAGGER=$(build.artifactStagingDirectory)/api-doc.json
+      api-spec-converter --from=openapi_3 --to=swagger_2 --syntax=json $API_DOC_OUTPUT > $API_DOC_OUTPUT_SWAGGER
+    displayName: 'Convert API Doc from OpenAPI 3 to Swagger 2'
+  
+  - script: npm run test
+    displayName: 'Run unit test and api test'
+
+  - task: Docker@1
+    displayName: 'Build docker image'
+    inputs:
+      azureSubscriptionEndpoint: $(acrConnector)
+      azureContainerRegistry: $(acr).azurecr.io
+      dockerFile: Dockerfile
+      imageName: '$(acr).azurecr.io/$(projectName):$(Build.BuildId)'
+      useDefaultContext: false
+
+  - task: Docker@1
+    displayName: Container registry login
+    inputs:
+      command: login
+      azureSubscriptionEndpoint: $(acrConnector)
+      azureContainerRegistry: $(acr).azurecr.io
+
+  - task: Docker@1
+    displayName: 'Push image to registry'
+    inputs:
+      azureSubscriptionEndpoint: $(acrConnector)
+      azureContainerRegistry: $(acr).azurecr.io
+      command: 'Push an image'
+      imageName: '$(acr).azurecr.io/$(projectName):$(Build.BuildId)'
+  
+  - task: HelmInstaller@0
+    displayName: 'Install Helm 2.9.1'
+    inputs:
+      kubectlVersion: 1.10.3
+
+  - task: HelmDeploy@0
+    displayName: 'helm package'
+    inputs:
+      azureSubscription: $(acrConnector)
+      azureResourceGroup: $(resourceGroup)
+      kubernetesCluster: $(clusterName)
+      namespace: 'irecruit-skeleton-service'
+      command: package
+      chartType: filePath
+      chartPath: helm/irecruit-skeleton-service
+      save: false
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
+      ArtifactName: 'irecruit-skeleton-service'
