@@ -47,6 +47,7 @@
     "@babel/core": "^7.4.3",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
+    "@types/jest": "^24.0.12",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "babel-plugin-source-map-support": "^2.0.1",
@@ -60,13 +61,13 @@
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-security": "^1.4.0",
     "jest": "^24.7.1",
-    "nodemon": "^1.18.10",
     "newman": "^4.4.0",
+    "nodemon": "^1.18.10",
     "pre-commit": "^1.2.2",
     "sinon": "^7.3.1",
+    "wait-on": "^3.2.0",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
-    "webpack-node-externals": "^1.7.2",
-    "wait-on": "^3.2.0"
+    "webpack-node-externals": "^1.7.2"
   }
 }
